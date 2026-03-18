@@ -7,7 +7,7 @@ let currentTab = "all";
 
 // Load issues for tab on click
 function switchTab(tab) {
-  // currentTab = tab;
+  currentTab = tab;
   // update active tab button styles
   const buttons = document.querySelectorAll(".tab-button");
   buttons.forEach(btn => {
@@ -30,7 +30,7 @@ function switchTab(tab) {
   loadIssues(tab);
 }
 
-
+// search function
 async function searchIssue() {
   const text = document.getElementById("searchInput").value.trim();
 
@@ -54,6 +54,7 @@ async function searchIssue() {
 
 // load ISsue data
 const loadIssues = async (type) => {
+
   let res = await fetch(API);
   let data = await res.json();
   let issues = data.data;
@@ -72,16 +73,16 @@ const loadIssues = async (type) => {
 }
 
 // display function for showing all data :
-
 function displayIssues(issues) {
+  //1. empty the container
   container.innerHTML = "";
 
   issues.forEach(issue => {
+    // create a card element
     const card = document.createElement("div");
-    // card.className = "bg-white p-4 rounded-lg shadow cursor-pointer border-t-3 ";
 
+    // reader condition learn from module 29
     const topBorderColor = issue.status === "open" ? "rgb(34,197,94)" : "rgb(124,58,237)";
-
 
     const statusStyle = issue.priority === "low" ? {
       bg: "#EEEFF2",
@@ -106,18 +107,7 @@ function displayIssues(issues) {
     // const statusTextColor = issue.priority === "low" ? "#9CA3AF"
     //   : issue.priority === "medium" ? "#F59E0B" : "#FEECEC";
 
-    // const bugColor = issue.priority === "high" ? {
-    //   bg: "#FEECEC",
-    //   border: "#BBF7D0",
-    //   text: "#00A96E"
-    // }
-    //   : {
-    //     bg: "#FEECEC",
-    //     border: "#FECACA",
-    //     text: "#EF4444"
-    //   };
-
-
+    // label styling my own js learn from AI
     const labelStyles = {
       "bug": {
         bg: "#FEECEC",
@@ -145,15 +135,15 @@ function displayIssues(issues) {
       }
     };
 
-
+// Learn from module 29: how extract data from an array. But can't apply in here
     const labelsHTML = issue.labels.map(label => {
-      const style = labelStyles[label]
-        || {
+      const style = labelStyles[label]  // this whole line can't get. means this label
+        || {   
         bg: "#EEEFF2",
         border: "#D1D5DB",
         text: "#6B7280",
         icon: "🏷️"
-      }; // default
+      }; 
 
       return `
     <span 
@@ -166,11 +156,8 @@ function displayIssues(issues) {
   `;
     }).join("");
 
-
-
     card.innerHTML =
       `
-       
     <div class="bg-white p-4 rounded-lg shadow cursor-pointer border-t-4 border-b-0 h-full"
         style="border-top-color: ${topBorderColor}; ">
 
@@ -193,15 +180,16 @@ function displayIssues(issues) {
                 #${issue.id} by ${issue.assignee}
             </p>
             <p class="text-sm text-gray-500 mb-1">
-                ${issue.createdAt}
+                ${issue.createdAt.toLocaleString()}
             </p>
         </div>
     </div>
-      `
-      ;
+      `;
 
+      // modal Don't get fully. 😥
     card.onclick = () => openModal(issue.id);
-    container.appendChild(card);
+    // append is easypeasy
+    container.append(card);
   });
 }
 
