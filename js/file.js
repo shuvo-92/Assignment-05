@@ -135,15 +135,15 @@ function displayIssues(issues) {
       }
     };
 
-// Learn from module 29: how extract data from an array. But can't apply in here
+    // Learn from module 29: how extract data from an array. But can't apply in here
     const labelsHTML = issue.labels.map(label => {
       const style = labelStyles[label]  // this whole line can't get. means this label
-        || {   
+        || {
         bg: "#EEEFF2",
         border: "#D1D5DB",
         text: "#6B7280",
         icon: "🏷️"
-      }; 
+      };
 
       return `
     <span 
@@ -186,25 +186,93 @@ function displayIssues(issues) {
     </div>
       `;
 
-      // modal Don't get fully. 😥
+    // modal Don't get fully. 😥
     card.onclick = () => openModal(issue.id);
     // append is easypeasy
     container.append(card);
   });
 }
 
+
 async function openModal(id) {
   const res = await fetch(`https://phi-lab-server.vercel.app/api/v1/lab/issue/${id}`);
   const data = await res.json();
   const issue = data.data;
 
-  document.getElementById("modalTitle").innerText = issue.title;
-  document.getElementById("modalDesc").innerText = issue.description;
-  document.getElementById("modalStatus").innerText = "Status: " + issue.status;
-  document.getElementById("modalAuthor").innerText = "Author: " + issue.author;
-  document.getElementById("modalPriority").innerText = "Priority: " + issue.priority;
-  document.getElementById("modalLabel").innerText = "Label: " + issue.label;
-  document.getElementById("modalDate").innerText = issue.createdAt;
+
+  const labelStyles = {
+    "bug": {
+      bg: "#FEECEC",
+      border: "#FECACA",
+      text: "#EF4444",
+      icon: `🐞`
+    },
+    "enhancement": {
+      bg: "#DEFCE8",
+      border: "#BBF7D0",
+      text: "#00A96E",
+      icon: "⚡"
+    },
+    "help wanted": {
+      bg: "#FFF8DB",
+      border: "#FDE68A",
+      text: "#D97706",
+      icon: "✨"
+    },
+    "good first issue": {
+      "bg": "#E0F0FF",
+      "border": "#A3D8FF",
+      "text": "#0366D6",
+      "icon": "🌱"
+    }
+  };
+  const labelsHTML = issue.labels.map(label => {
+    const style = labelStyles[label]  // this whole line can't get. means this label
+      || {
+      bg: "#EEEFF2",
+      border: "#D1D5DB",
+      text: "#6B7280",
+      icon: "🏷️"
+    };
+
+    return `
+    <span 
+      class="flex items-center gap-0.5 px-2 py-1 rounded-2xl text-xs"
+      style="background-color: ${style.bg}; border:1px solid ${style.border}; color: ${style.text};"
+    >
+      <span>${style.icon}</span>
+      <span class="uppercase">${label}</span>
+    </span>
+  `;
+  }).join("");
+
+  document.getElementById("modalcontent").innerHTML =
+    `
+    <h1 class="font-bold text-xl my-2">${issue.title}</h1>
+    <p class="text-sm text-gray-600 mb-2">${issue.description}</p>
+
+    <div class="flex flex-wrap items-center gap-1.5 my-4">
+      ${labelsHTML}
+    </div>
+
+      <div class="flex justify-between items-center p-4 my-4 bg-gray-300 rounded-2xl">
+            <div class="flex flex-col gap-1">
+                <p class="text-gray-700 text-sm">Assignee:</p>
+                <p class="font-semibold text-gray-800 text-sm">
+                    ${issue.assignee}
+                </p>
+            </div>
+            <div class="flex flex-col gap-2">
+                <p class="text-gray-700 text-sm">Priority:</p>
+                <p class="bg-red-500 p-1 text-xs text-white rounded-lg text-center uppercase" >
+                    ${issue.priority}
+                </p>
+            </div>
+        </div>
+  
+      <button onclick="closeModal()"
+             class="absolute top-5 right-3 px-2 py-1 bg-blue-600 text-white text-xs rounded-sm ">Close</button>
+  `;
 
   document.getElementById("modal").classList.remove("hidden");
 }
@@ -212,7 +280,6 @@ async function openModal(id) {
 function closeModal() {
   document.getElementById("modal").classList.add("hidden");
 }
-
 
 // On page load default tab
 switchTab("all");
