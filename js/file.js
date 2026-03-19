@@ -64,6 +64,8 @@ const loadIssues = async (type) => {
   } else if (type === "closed") {
     issues = issues.filter(i => i.status === "closed");
   }
+  // console.log(issues);
+  
   document.getElementById("issue-count").innerText = issues.length;
 
   // call the display function
@@ -200,6 +202,20 @@ async function openModal(id) {
   const issue = data.data;
 
 
+    const statusStyle = issue.priority === "low" ? {
+      bg: "#EEEFF2",
+      text: "#9CA3AF",
+    }
+      : issue.priority === "medium" ? {
+        bg: "#FFF6D1",
+        text: "#F59E0B",
+      }
+        :
+        {
+          bg: "#FEECEC",
+          text: "#EF4444",
+        };
+        
   const labelStyles = {
     "bug": {
       bg: "#FEECEC",
@@ -255,7 +271,7 @@ async function openModal(id) {
       ${labelsHTML}
     </div>
 
-      <div class="flex justify-between items-center p-4 my-4 bg-gray-300 rounded-2xl">
+      <div class="flex justify-between items-center p-4 my-4 bg-gray-100 rounded-2xl">
             <div class="flex flex-col gap-1">
                 <p class="text-gray-700 text-sm">Assignee:</p>
                 <p class="font-semibold text-gray-800 text-sm">
@@ -264,7 +280,7 @@ async function openModal(id) {
             </div>
             <div class="flex flex-col gap-2">
                 <p class="text-gray-700 text-sm">Priority:</p>
-                <p class="bg-red-500 p-1 text-xs text-white rounded-lg text-center uppercase" >
+                <p class="bg-red-500 p-1 text-xs text-white rounded-lg text-center uppercase" style="background-color: ${statusStyle.bg}; color:${statusStyle.text}" >
                     ${issue.priority}
                 </p>
             </div>
@@ -273,7 +289,6 @@ async function openModal(id) {
       <button onclick="closeModal()"
              class="absolute top-5 right-3 px-2 py-1 bg-blue-600 text-white text-xs rounded-sm ">Close</button>
   `;
-
   document.getElementById("modal").classList.remove("hidden");
 }
 
